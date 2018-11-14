@@ -29,7 +29,7 @@ function Question(props) {
 }
 
 function Selections(props) {
-  var choice = questionAnswer[props.index].multiChoice;
+  var choice = props.multiChoice;
   var choices = [];
   var style = {
     display: "flex",
@@ -45,7 +45,8 @@ function Selections(props) {
   for (i = 0; i < choice.length; i++) {
     choices.push(React.createElement(
       "button",
-      { style: style },
+      { style: style,
+        onClick: props.buttonClick },
       choice[i]
     ));
   }
@@ -83,6 +84,8 @@ function AnswersCorrect(props) {
   );
 }
 
+var x = 0;
+
 var TriviaGame = function (_React$Component) {
   _inherits(TriviaGame, _React$Component);
 
@@ -91,25 +94,53 @@ var TriviaGame = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (TriviaGame.__proto__ || Object.getPrototypeOf(TriviaGame)).call(this, props));
 
-    var x = 2;
+    var x = 0;
+    _this.buttonClick = _this.buttonClick.bind(_this);
     _this.state = {
-      index: x,
       displayQuestion: questionAnswer[x].question,
       correct: 0,
       incorrect: 0,
-      correctAnswer: questionAnswer[x].answer
+      correctAnswer: questionAnswer[x].answer,
+      choice: questionAnswer[x].multiChoice
     };
     return _this;
   }
 
   _createClass(TriviaGame, [{
+    key: "buttonClick",
+    value: function buttonClick(e) {
+      if (e.target.innerHTML == this.state.correctAnswer) {
+        if (x < questionAnswer.length - 1) {
+          x++;
+        }
+        console.log(x);
+        this.setState({
+          correct: this.state.correct + 1,
+          displayQuestion: questionAnswer[x].question,
+          correctAnswer: questionAnswer[x].answer,
+          choice: questionAnswer[x].multiChoice
+        });
+      } else {
+        if (x < questionAnswer.length - 1) {
+          x++;
+        }
+        console.log(x);
+        this.setState({
+          incorrect: this.state.incorrect + 1,
+          displayQuestion: questionAnswer[x].question,
+          correctAnswer: questionAnswer[x].answer,
+          choice: questionAnswer[x].multiChoice
+        });
+      }
+    }
+  }, {
     key: "render",
     value: function render() {
       return React.createElement(
         "div",
         null,
         React.createElement(Question, { question: this.state.displayQuestion }),
-        React.createElement(Selections, { index: this.state.index }),
+        React.createElement(Selections, { multiChoice: this.state.choice, buttonClick: this.buttonClick }),
         React.createElement(AnswersCorrect, {
           correct: this.state.correct,
           incorrect: this.state.incorrect })
