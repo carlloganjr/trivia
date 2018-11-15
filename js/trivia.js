@@ -7,18 +7,28 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var questionAnswer = [{
-  question: "Question 1",
-  multiChoice: ["a", "b", "c", "d"],
-  answer: "b"
+  question: "When the Doctor meets Amelia Pond, what is it that " + "he eats and actually likes?",
+  multiChoice: ["Cheese muffins", "Pudding and bacon", "Tofu Mac and cheese", "Fish fingers and custard"],
+  answer: "Fish fingers and custard"
 }, {
-  question: "Question 2",
-  multiChoice: ["e", "f", "g", "h"],
-  answer: "e"
+  question: "Which one of the following is given the nickname 'Potato Heads'?",
+  multiChoice: ["Ood", "Sontarans", "Daleks", "Cyber men"],
+  answer: "Sontarans"
 }, {
-  question: "Question 3",
-  multiChoice: ["i", "j", "k", "l"],
-  answer: "l"
+  question: "What name was given to the huge Dalek leader?",
+  multiChoice: ["King Dalek", "Emperor Dalek", "The Big Can-hoona", "Super Duper Tin Can"],
+  answer: "Emperor Dalek"
+}, {
+  question: "Where did The Doctor and Rose first meet Captain Jack?",
+  multiChoice: ["World War II", "Joe's Diner", "A space bar", "The backseat of the Tardis"],
+  answer: "World War II"
+}, {
+  question: "Which one of the following villains is also a timelord like the Doctor?",
+  multiChoice: ["Cyber Men", "The Master", "The Brain", "Cobra Commander"],
+  answer: "Emperor Dalek"
 }];
+
+var x = 0;
 
 function Question(props) {
   return React.createElement(
@@ -40,12 +50,13 @@ function Selections(props) {
       divStyle = {
     float: "left",
     width: "40%",
-    marginLeft: "3em"
+    marginLeft: "3em",
+    marginBottom: "3em"
   };
   for (i = 0; i < choice.length; i++) {
     choices.push(React.createElement(
       "button",
-      { style: style,
+      { "class": "mainButton", style: style,
         onClick: props.buttonClick },
       choice[i]
     ));
@@ -84,7 +95,33 @@ function AnswersCorrect(props) {
   );
 }
 
-var x = 0;
+function PlayAgain(props) {
+  var divStyle = {
+    display: props.visible,
+    flexDirection: "row",
+    alignItems: "center",
+    clear: "both",
+    width: "100%",
+    height: "2em"
+  },
+      style = {
+    marginLeft: "3em"
+  };
+  return React.createElement(
+    "div",
+    { style: divStyle },
+    React.createElement(
+      "h2",
+      { style: style },
+      props.message
+    ),
+    React.createElement(
+      "button",
+      { "class": "playButton", style: style },
+      props.button
+    )
+  );
+}
 
 var TriviaGame = function (_React$Component) {
   _inherits(TriviaGame, _React$Component);
@@ -94,14 +131,14 @@ var TriviaGame = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (TriviaGame.__proto__ || Object.getPrototypeOf(TriviaGame)).call(this, props));
 
-    var x = 0;
     _this.buttonClick = _this.buttonClick.bind(_this);
     _this.state = {
       displayQuestion: questionAnswer[x].question,
       correct: 0,
       incorrect: 0,
       correctAnswer: questionAnswer[x].answer,
-      choice: questionAnswer[x].multiChoice
+      choice: questionAnswer[x].multiChoice,
+      visible: "none"
     };
     return _this;
   }
@@ -110,23 +147,22 @@ var TriviaGame = function (_React$Component) {
     key: "buttonClick",
     value: function buttonClick(e) {
       if (e.target.innerHTML == this.state.correctAnswer) {
-        if (x < questionAnswer.length - 1) {
-          x++;
-        }
-        console.log(x);
-        this.setState({
-          correct: this.state.correct + 1,
-          displayQuestion: questionAnswer[x].question,
-          correctAnswer: questionAnswer[x].answer,
-          choice: questionAnswer[x].multiChoice
-        });
+        this.setState({ correct: this.state.correct + 1 });
       } else {
+        this.setState({ incorrect: this.state.incorrect + 1 });
+      }
+
+      {
         if (x < questionAnswer.length - 1) {
           x++;
+        } else if (this.state.correct + this.state.incorrect == questionAnswer.length) {
+          this.setState({
+            correct: this.state.correct,
+            incorrect: this.state.incorrect });
+        } else if (x == questionAnswer.length - 1) {
+          this.setState({ visible: "flex" });
         }
-        console.log(x);
         this.setState({
-          incorrect: this.state.incorrect + 1,
           displayQuestion: questionAnswer[x].question,
           correctAnswer: questionAnswer[x].answer,
           choice: questionAnswer[x].multiChoice
@@ -143,7 +179,10 @@ var TriviaGame = function (_React$Component) {
         React.createElement(Selections, { multiChoice: this.state.choice, buttonClick: this.buttonClick }),
         React.createElement(AnswersCorrect, {
           correct: this.state.correct,
-          incorrect: this.state.incorrect })
+          incorrect: this.state.incorrect }),
+        React.createElement(PlayAgain, { message: "Way to go! That's all of the questions!",
+          button: "Play again?",
+          visible: this.state.visible })
       );
     }
   }]);

@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background: #1FC7B0;
+  color: #00156A;
+}
+
+h1 {
+  width: 90%;
+  margin: .5em auto;
+  padding: .5em;
+  background: #70D1C4;
+  border-radius: .5em;
+}
+
+.mainButton {
+  color: white;
+  text-decoration: none;
+  border: .2em solid #00156A;
+  margin: .25em 0;
+  border-radius: .5em;
+  font-size: 1em;
+  background: #3553CF;
+}
+
+.mainButton:hover {
+  background: #7F90D8;
+  border: .2em solid #3553CF;
+}
+
+.playButton {
+  color: white;
+  text-decoration: none;
+  border: none;
+  margin: .25em 0;
+  border-radius: .5em;
+  font-size: 1em;
+  background: #3553CF;
+  padding: .5em;
+}
