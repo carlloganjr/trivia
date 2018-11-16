@@ -39,3 +39,19 @@ h1 {
   background: #3553CF;
   padding: .5em;
 }
+
+.playButton:hover {
+  background: #7F90D8;
+}
+
+#answerStyle {
+  background: #3553CF;
+  border-radius: .25em;
+  padding: .25em;
+  color: white;
+}
+
+#highlight {
+  background: #00E600;
+  color: #3553CF;
+}

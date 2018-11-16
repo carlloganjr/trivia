@@ -20,14 +20,13 @@ var questionAnswer = [{
   answer: "Emperor Dalek"
 }, {
   question: "Where did The Doctor and Rose first meet Captain Jack?",
-  multiChoice: ["World War II", "Joe's Diner", "A space bar", "The backseat of the Tardis"],
+  multiChoice: ["The backseat of the Tardis", "Joe's Diner", "A space bar", "World War II"],
   answer: "World War II"
 }, {
   question: "Which one of the following villains is also a timelord like the Doctor?",
-  multiChoice: ["Cyber Men", "The Master", "The Brain", "Cobra Commander"],
-  answer: "Emperor Dalek"
+  multiChoice: ["Cyber Men", "The Brain", "The Master", "Cobra Commander"],
+  answer: "The Master"
 }];
-
 var x = 0;
 
 function Question(props) {
@@ -54,12 +53,21 @@ function Selections(props) {
     marginBottom: "3em"
   };
   for (i = 0; i < choice.length; i++) {
-    choices.push(React.createElement(
-      "button",
-      { "class": "mainButton", style: style,
-        onClick: props.buttonClick },
-      choice[i]
-    ));
+    if (choice[i] == props.answerIs) {
+      choices.push(React.createElement(
+        "button",
+        { id: props.highlight, "class": "mainButton", style: style,
+          onClick: props.buttonClick },
+        choice[i]
+      ));
+    } else {
+      choices.push(React.createElement(
+        "button",
+        { "class": "mainButton", style: style,
+          onClick: props.buttonClick },
+        choice[i]
+      ));
+    }
   }
   return React.createElement(
     "div",
@@ -71,7 +79,8 @@ function Selections(props) {
 function AnswersCorrect(props) {
   var style = {
     display: "flex",
-    marginTop: "4em"
+    marginTop: "4em",
+    padding: ".25em"
   },
       divStyle = {
     width: "25%",
@@ -82,13 +91,13 @@ function AnswersCorrect(props) {
     { style: divStyle },
     React.createElement(
       "h2",
-      null,
+      { id: props.correctStyle, style: { padding: ".25em" } },
       "Correct:",
       props.correct
     ),
     React.createElement(
       "h2",
-      { style: style },
+      { id: props.incorrectStyle, style: style },
       "Incorrect:",
       props.incorrect
     )
@@ -117,7 +126,8 @@ function PlayAgain(props) {
     ),
     React.createElement(
       "button",
-      { "class": "playButton", style: style },
+      { "class": "playButton", style: style,
+        onClick: props.playAgainClick },
       props.button
     )
   );
@@ -132,25 +142,62 @@ var TriviaGame = function (_React$Component) {
     var _this = _possibleConstructorReturn(this, (TriviaGame.__proto__ || Object.getPrototypeOf(TriviaGame)).call(this, props));
 
     _this.buttonClick = _this.buttonClick.bind(_this);
+    _this.playAgainClick = _this.playAgainClick.bind(_this);
     _this.state = {
       displayQuestion: questionAnswer[x].question,
       correct: 0,
       incorrect: 0,
       correctAnswer: questionAnswer[x].answer,
       choice: questionAnswer[x].multiChoice,
-      visible: "none"
+      visible: "none",
+      correctStyle: "",
+      incorrectStyle: "",
+      highlight: ""
     };
     return _this;
   }
 
   _createClass(TriviaGame, [{
+    key: "playAgainClick",
+    value: function playAgainClick() {
+      x = 0;
+      this.setState({
+        displayQuestion: questionAnswer[x].question,
+        correct: 0,
+        incorrect: 0,
+        correctAnswer: questionAnswer[x].answer,
+        choice: questionAnswer[x].multiChoice,
+        visible: "none",
+        correctStyle: "",
+        incorrectStyle: "",
+        highlight: ""
+      });
+    }
+  }, {
     key: "buttonClick",
     value: function buttonClick(e) {
+      var _this2 = this;
+
       if (e.target.innerHTML == this.state.correctAnswer) {
-        this.setState({ correct: this.state.correct + 1 });
+        this.setState({ correct: this.state.correct + 1,
+          correctStyle: "answerStyle",
+          incorrectStyle: "",
+          highlight: "highlight" });
       } else {
-        this.setState({ incorrect: this.state.incorrect + 1 });
+        this.setState({ incorrect: this.state.incorrect + 1,
+          correctStyle: "",
+          incorrectStyle: "answerStyle",
+          highlight: "highlight" });
       }
+
+      setTimeout(function () {
+        return _this2.setState({
+          displayQuestion: questionAnswer[x].question,
+          correctAnswer: questionAnswer[x].answer,
+          choice: questionAnswer[x].multiChoice,
+          highlight: ""
+        });
+      }, 1500);
 
       {
         if (x < questionAnswer.length - 1) {
@@ -162,11 +209,6 @@ var TriviaGame = function (_React$Component) {
         } else if (x == questionAnswer.length - 1) {
           this.setState({ visible: "flex" });
         }
-        this.setState({
-          displayQuestion: questionAnswer[x].question,
-          correctAnswer: questionAnswer[x].answer,
-          choice: questionAnswer[x].multiChoice
-        });
       }
     }
   }, {
@@ -176,13 +218,19 @@ var TriviaGame = function (_React$Component) {
         "div",
         null,
         React.createElement(Question, { question: this.state.displayQuestion }),
-        React.createElement(Selections, { multiChoice: this.state.choice, buttonClick: this.buttonClick }),
+        React.createElement(Selections, { multiChoice: this.state.choice,
+          answerIs: this.state.correctAnswer,
+          highlight: this.state.highlight,
+          buttonClick: this.buttonClick }),
         React.createElement(AnswersCorrect, {
+          correctStyle: this.state.correctStyle,
+          incorrectStyle: this.state.incorrectStyle,
           correct: this.state.correct,
           incorrect: this.state.incorrect }),
         React.createElement(PlayAgain, { message: "Way to go! That's all of the questions!",
           button: "Play again?",
-          visible: this.state.visible })
+          visible: this.state.visible,
+          playAgainClick: this.playAgainClick })
       );
     }
   }]);
